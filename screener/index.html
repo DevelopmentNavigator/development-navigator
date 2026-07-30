@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en-AU" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 10-Minute Industrial Deal Screener | Development Navigator</title>
+<meta name="description" content="Work out if an industrial unit site stacks up before you ever call the agent. Free quick-screen feasibility calculator by Development Navigator.">
+
+<!-- ============================================================
+  SETUP - swap these two values before going live
+  1. KIT_FORM_ID: your Kit (ConvertKit) form ID for the email gate
+  2. POSTHOG_KEY: same project key as the DN landing page
+  NOTE: links arriving from the ManyChat email can append ?unlock=1
+  to skip the email gate (they have already given their email).
+============================================================ -->
+<script>
+  const KIT_FORM_ID = "9743528";      // e.g. "1234567"
+  const POSTHOG_KEY = "phc_m8n7GNGqmZXfgPxnixuL6zaWEn3vmtPh5Ahc4nkU2hMp";      // e.g. "phc_xxxxx"
+</script>
+<script>
+  if (typeof POSTHOG_KEY !== "undefined" && POSTHOG_KEY && POSTHOG_KEY.indexOf("YOUR_") !== 0) {
+    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+    posthog.init(POSTHOG_KEY, {api_host: "https://app.posthog.com"});
+  }
+  function track(event, props) {
+    if (window.posthog && window.posthog.capture) { window.posthog.capture(event, props || {}); }
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,700;0,800;0,900;1,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ============ TOKENS - light values identical to index.html ============ */
+:root{
+  --black:#151210;
+  --black-soft:#221E1B;
+  --white:#FFFFFF;
+  --red:#C31D2C;
+  --red-dark:#8C1420;
+  /* semantic tokens (theme-switchable) */
+  --bg:#F6F3EE;             /* --paper */
+  --card:#FFFFFF;
+  --line:#E4DED3;
+  --ink:#151210;
+  --ink-soft:#5B5449;
+  --field:#F6F3EE;
+  --red-tint:#FBE4E1;
+  --hl-ink:#8C1420;
+  /* verdict colours (dark card context, both themes) */
+  --v-green:#5BD08A;
+  --v-amber:#F2B23E;
+  --v-red:#FF6B6E;
+}
+[data-theme="dark"]{
+  --bg:#151210;
+  --card:#221E1B;
+  --line:#3B342D;
+  --ink:#F6F3EE;
+  --ink-soft:#B5AC9F;
+  --field:#151210;
+  --red-tint:rgba(195,29,44,0.22);
+  --hl-ink:#FF6B6E;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  transition:background .25s ease, color .25s ease;
+}
+h1,h2,h3{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;
+  line-height:1.05;
+  margin:0;
+  letter-spacing:-0.01em;
+}
+a{color:inherit;}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px;}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+section{padding:96px 0;position:relative;}
+@media (max-width:760px){section{padding:64px 0;}}
+
+/* ============ THEME TOGGLE ============ */
+.theme-toggle{
+  position:fixed;
+  top:18px;right:18px;
+  z-index:50;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:var(--card);
+  border:1.5px solid var(--line);
+  border-radius:999px;
+  color:var(--ink);
+  cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  padding:8px 14px;
+  transition:border-color .2s ease, background .25s ease, color .25s ease;
+}
+.theme-toggle:hover{border-color:var(--red);}
+.theme-toggle .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--red);
+  display:inline-block;
+}
+
+/* ============ SHARED COMPONENTS - from index.html ============ */
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--red);
+  background:var(--card);
+  border:1.5px dashed var(--red);
+  padding:9px 18px;
+  border-radius:3px;
+  transform:rotate(-1.2deg);
+}
+[data-theme="dark"] .eyebrow{color:#FF6B6E;border-color:#FF6B6E;}
+.eyebrow::before{
+  content:"";
+  width:6px;height:6px;
+  border-radius:50%;
+  background:currentColor;
+  display:inline-block;
+}
+.hl{
+  background-image:linear-gradient(var(--red-tint), var(--red-tint));
+  background-repeat:no-repeat;
+  background-size:100% 74%;
+  background-position:0 58%;
+  color:var(--hl-ink);
+  padding:0 10px;
+  border-radius:4px;
+  box-decoration-break:clone;
+  -webkit-box-decoration-break:clone;
+}
+.subclaim{
+  display:inline-block;
+  margin:26px auto 0;
+  background:var(--red);
+  color:var(--white);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:0.02em;
+  padding:10px 20px;
+  border-radius:4px;
+}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:var(--red);
+  color:var(--white);
+  font-family:'Archivo',sans-serif;
+  font-weight:800;
+  font-size:16px;
+  letter-spacing:0.01em;
+  text-decoration:none;
+  padding:16px 30px;
+  border-radius:6px;
+  border:2px solid var(--red);
+  cursor:pointer;
+  transition:background .2s ease, color .2s ease, transform .15s ease;
+}
+.btn:hover{background:var(--red-dark);border-color:var(--red-dark);transform:translateY(-1px);}
+.btn:focus-visible{outline:3px solid var(--ink);outline-offset:3px;}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;}
+}
+
+/* ============ HERO ============ */
+.hero{padding:88px 0 64px;text-align:center;}
+.hero .eyebrow{margin-bottom:28px;}
+.hero h1{font-size:clamp(2.1rem, 4.6vw, 3.6rem);max-width:920px;margin:0 auto;}
+.hero p.lede{color:var(--ink-soft);max-width:560px;margin:22px auto 0;font-size:17px;}
+
+/* ============ APP LAYOUT ============ */
+.app-sec{padding:0 0 96px;}
+@media (max-width:760px){.app-sec{padding:0 0 64px;}}
+.app{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:26px;
+}
+@media (min-width:900px){
+  .app{grid-template-columns:minmax(0,1fr) 420px;align-items:start;}
+  .results-col{position:sticky;top:24px;}
+}
+
+/* ============ INPUT CARDS ============ */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:34px 32px;
+  transition:background .25s ease, border-color .25s ease;
+}
+.card + .card{margin-top:26px;}
+@media (max-width:480px){.card{padding:26px 22px;}}
+.card h3{font-size:1.3rem;margin-bottom:20px;}
+.step-tag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:var(--ink);
+  color:var(--bg);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  font-weight:600;
+  margin-right:12px;
+  vertical-align:middle;
+}
+
+.field{margin-bottom:24px;}
+.field:last-child{margin-bottom:0;}
+.field label,.field .flabel{
+  display:block;
+  font-weight:600;
+  font-size:15px;
+  margin-bottom:4px;
+}
+.hint{font-size:13.5px;color:var(--ink-soft);margin-bottom:10px;}
+.input-shell{position:relative;}
+input[type="text"],input[type="number"],input[type="email"]{
+  width:100%;
+  background:var(--field);
+  border:1.5px solid var(--line);
+  border-radius:6px;
+  color:var(--ink);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:16px;
+  font-weight:600;
+  padding:13px 14px;
+  transition:border-color .2s ease, background .25s ease, color .25s ease;
+}
+input:focus{border-color:var(--red);outline:none;}
+input::placeholder{color:var(--ink-soft);opacity:0.6;font-weight:500;}
+.prefix input{padding-left:32px;}
+.suffix input{padding-right:64px;}
+.affix{
+  position:absolute;top:50%;transform:translateY(-50%);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:14px;color:var(--ink-soft);
+  pointer-events:none;
+}
+.affix.l{left:14px;}
+.affix.r{right:14px;}
+
+/* coverage slider */
+.slider-row{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.slider-val{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:22px;
+  font-weight:600;
+  color:var(--red);
+  min-width:72px;
+  text-align:right;
+}
+[data-theme="dark"] .slider-val{color:#FF6B6E;}
+input[type="range"]{
+  -webkit-appearance:none;
+  appearance:none;
+  width:100%;
+  height:6px;
+  border-radius:999px;
+  background:var(--line);
+  outline:none;
+  cursor:pointer;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:24px;height:24px;
+  border-radius:50%;
+  background:var(--red);
+  border:3px solid var(--card);
+  box-shadow:0 1px 4px rgba(21,18,16,0.3);
+  cursor:pointer;
+}
+input[type="range"]::-moz-range-thumb{
+  width:24px;height:24px;
+  border-radius:50%;
+  background:var(--red);
+  border:3px solid var(--card);
+  box-shadow:0 1px 4px rgba(21,18,16,0.3);
+  cursor:pointer;
+}
+input[type="range"]:focus-visible{outline:3px solid var(--ink);outline-offset:4px;}
+.slider-scale{
+  display:flex;
+  justify-content:space-between;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  color:var(--ink-soft);
+  margin-top:6px;
+}
+
+details.learn{
+  margin-top:12px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:var(--field);
+}
+details.learn summary{
+  cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;color:var(--ink-soft);
+  padding:11px 14px;list-style:none;
+}
+details.learn summary::-webkit-details-marker{display:none;}
+details.learn summary::before{content:"+ ";color:var(--red);}
+details.learn[open] summary::before{content:"- ";}
+details.learn div{padding:0 14px 12px;font-size:13.5px;color:var(--ink-soft);}
+details.learn a{color:var(--red);font-weight:600;}
+[data-theme="dark"] details.learn a{color:#FF6B6E;}
+
+/* live GFA strip */
+.gfa-strip{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:4px solid var(--red);
+  border-radius:10px;
+  padding:20px 24px;
+  margin-top:26px;
+  transition:background .25s ease, border-color .25s ease;
+}
+.gfa-strip .gfa-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;font-weight:600;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--red);margin-bottom:6px;
+}
+[data-theme="dark"] .gfa-strip .gfa-label{color:#FF6B6E;}
+.gfa-strip .gfa-eq{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(14px,2.4vw,17px);
+  font-weight:600;color:var(--ink-soft);
+}
+.gfa-strip .gfa-eq b{color:var(--ink);font-weight:600;}
+.gfa-strip .gfa-eq .res{
+  background-image:linear-gradient(var(--red-tint), var(--red-tint));
+  background-repeat:no-repeat;background-size:100% 74%;background-position:0 58%;
+  color:var(--hl-ink);padding:0 6px;border-radius:4px;font-weight:600;
+}
+.gfa-strip .gfa-units{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);margin-top:6px;}
+
+/* ============ RESULTS (dark block in both themes) ============ */
+.verdict-card{
+  background:var(--black);
+  color:var(--white);
+  border-radius:14px;
+  overflow:hidden;
+  position:relative;
+}
+[data-theme="dark"] .verdict-card{border:1px solid var(--line);}
+.verdict-inner{padding:34px;transition:filter .3s ease;}
+@media (max-width:480px){.verdict-inner{padding:24px 22px;}}
+.verdict-inner.locked{filter:blur(10px);pointer-events:none;user-select:none;}
+
+.verdict-eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;font-weight:600;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:#FF6B6E;margin-bottom:18px;
+}
+.verdict-stamp{
+  text-align:center;
+  padding:24px 16px;
+  border-radius:8px;
+  border:1.5px dashed rgba(255,255,255,0.25);
+  margin-bottom:24px;
+}
+.verdict-stamp.green{border-color:var(--v-green);background:rgba(91,208,138,0.08);}
+.verdict-stamp.amber{border-color:var(--v-amber);background:rgba(242,178,62,0.08);}
+.verdict-stamp.red{border-color:var(--v-red);background:rgba(255,107,110,0.08);}
+.verdict-stamp.waiting{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.04);}
+.verdict-word{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;font-weight:600;
+  letter-spacing:0.18em;text-transform:uppercase;
+}
+.verdict-stamp.green .verdict-word{color:var(--v-green);}
+.verdict-stamp.amber .verdict-word{color:var(--v-amber);}
+.verdict-stamp.red .verdict-word{color:var(--v-red);}
+.verdict-stamp.waiting .verdict-word{color:#9C9489;}
+.verdict-mdc{
+  font-family:'Archivo',sans-serif;
+  font-size:54px;font-weight:900;
+  line-height:1.1;margin:6px 0 2px;
+}
+.verdict-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;letter-spacing:0.1em;
+  text-transform:uppercase;color:#9C9489;
+}
+.verdict-msg{font-size:14.5px;color:#C9C2B6;margin-bottom:22px;}
+
+.breakdown{border-top:1px solid rgba(255,255,255,0.12);}
+.row{
+  display:flex;justify-content:space-between;gap:12px;
+  padding:9px 0;font-size:13.5px;
+  border-bottom:1px solid rgba(255,255,255,0.12);
+}
+.row .k{color:#9C9489;}
+.row .v{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap;color:var(--white);}
+.row.total .k,.row.total .v{color:var(--white);font-weight:700;}
+.row.profit .v{font-weight:700;}
+
+.rlv{
+  margin-top:20px;
+  padding:16px 18px;
+  border:1.5px dashed #FF6B6E;
+  border-radius:8px;
+  font-size:14px;color:#C9C2B6;
+}
+.rlv b{font-family:'IBM Plex Mono',monospace;color:#FF6B6E;font-weight:600;font-size:15px;}
+
+/* email gate */
+.gate{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  padding:24px;
+  background:rgba(21,18,16,0.45);
+}
+.gate-box{
+  background:var(--card);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:30px 28px;
+  width:100%;max-width:340px;
+  text-align:center;
+  box-shadow:0 20px 60px rgba(21,18,16,0.45);
+}
+.gate-box h3{font-size:1.2rem;margin-bottom:8px;}
+.gate-box p{font-size:13.5px;color:var(--ink-soft);margin-bottom:16px;}
+.gate-box input{margin-bottom:12px;}
+.gate-box .btn{width:100%;justify-content:center;}
+.gate-fine{font-size:11.5px;color:var(--ink-soft);margin-top:12px;line-height:1.5;}
+.gate-err{font-size:12.5px;color:var(--red);margin-top:8px;display:none;font-weight:600;}
+[data-theme="dark"] .gate-err{color:#FF6B6E;}
+
+/* ============ CTA ============ */
+.cta{
+  margin-top:26px;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:34px 32px;
+  text-align:center;
+  transition:background .25s ease, border-color .25s ease;
+}
+.cta .cta-eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;font-weight:600;
+  letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--red);margin-bottom:14px;
+}
+[data-theme="dark"] .cta .cta-eyebrow{color:#FF6B6E;}
+.cta h2{font-size:clamp(1.25rem,2.4vw,1.5rem);margin-bottom:10px;}
+.cta p{font-size:14.5px;color:var(--ink-soft);margin-bottom:22px;}
+
+/* ============ FOOTER - identical to index.html + disclaimer ============ */
+footer{
+  background:var(--black);
+  color:#9C9489;
+  padding:34px 0;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  letter-spacing:0.04em;
+}
+footer .wrap{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;
+}
+footer .logo{
+  color:var(--white);
+  font-family:'Archivo',sans-serif;
+  font-weight:900;font-size:14px;letter-spacing:0.02em;
+}
+.disclaimer{
+  background:var(--black);
+  color:#9C9489;
+  padding:0 0 26px;
+  font-size:12px;line-height:1.7;
+}
+.disclaimer .wrap{border-top:1px solid rgba(255,255,255,0.12);padding-top:20px;}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch between light and dark mode">
+  <span class="dot"></span><span id="themeLabel">Dark mode</span>
+</button>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Free Tool for Aussie Aspiring Developers</div>
+    <h1>The <span class="hl">10-Minute</span> Industrial Deal Screener</h1>
+    <p class="lede">Work out if an industrial unit site stacks up before you ever call the agent. Punch in the numbers straight off the listing - get a go / no-go verdict in minutes.</p>
+    <span class="subclaim">real numbers, real verdict, ten minutes</span>
+  </div>
+</section>
+
+<!-- ============ SCREENER ============ -->
+<section class="app-sec">
+  <div class="wrap app">
+
+    <!-- INPUTS -->
+    <div class="inputs-col">
+
+      <div class="card">
+        <h3><span class="step-tag">1</span>The Site</h3>
+
+        <div class="field">
+          <label for="landPrice">Asking price</label>
+          <div class="hint">The land price on the listing, ex GST.</div>
+          <div class="input-shell prefix">
+            <span class="affix l">$</span>
+            <input type="text" id="landPrice" inputmode="numeric" value="1,200,000">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="landArea">Land area</label>
+          <div class="input-shell suffix">
+            <input type="text" id="landArea" inputmode="numeric" value="4,000">
+            <span class="affix r">sqm</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="coverage">Site coverage</label>
+          <div class="hint">The share of your land that becomes sellable floor space. Every council sets its own limits, so this varies site to site - slide to what you think applies, then verify it before you go further.</div>
+          <div class="slider-row">
+            <input type="range" id="coverage" min="40" max="75" step="1" value="50" aria-label="Site coverage percentage">
+            <span class="slider-val" id="coverageVal">50%</span>
+          </div>
+          <div class="slider-scale"><span>40%</span><span>75%</span></div>
+          <details class="learn">
+            <summary>Where do I find my site's real limit?</summary>
+            <div>It sits in your council's planning controls, and they differ in every local government area. Inside <a href="https://developmentnavigator.com/" target="_blank" rel="noopener">Development Navigator</a> I show you how to pull the controls for any site in Australia in under 5 minutes.</div>
+          </details>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="step-tag">2</span>Build &amp; Sell</h3>
+
+        <div class="field">
+          <label for="buildRate">Construction cost</label>
+          <div class="hint">What it costs to build per sqm of floor space, including siteworks. This number makes or breaks a feasibility - if you don't know yours yet, that's worth paying attention to.</div>
+          <div class="input-shell prefix suffix">
+            <span class="affix l">$</span>
+            <input type="text" id="buildRate" inputmode="numeric" value="" placeholder="Enter your rate">
+            <span class="affix r">/sqm</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="salePsm">End sale value</label>
+          <div class="hint">What comparable units are selling for per sqm, ex GST. Check recent listings in the same estate or suburb - this number matters most, so use real evidence.</div>
+          <div class="input-shell prefix suffix">
+            <span class="affix l">$</span>
+            <input type="text" id="salePsm" inputmode="numeric" value="3,200">
+            <span class="affix r">/sqm</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="softPct">Soft costs</label>
+          <div class="hint">Consultants, council contributions, approvals and contingency, as a share of construction. 20% is a sound screening allowance.</div>
+          <div class="input-shell suffix">
+            <input type="number" id="softPct" min="5" max="40" step="1" value="20">
+            <span class="affix r">%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="months">Months to complete</label>
+          <div class="hint">Settlement through to sell-down. Drives your holding and finance cost.</div>
+          <div class="input-shell suffix">
+            <input type="number" id="months" min="6" max="48" step="1" value="18">
+            <span class="affix r">months</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="gfa-strip" aria-live="polite">
+        <div class="gfa-label">Your sellable space</div>
+        <div class="gfa-eq"><b id="eqLand">4,000</b> sqm land &times; <b id="eqCov">50%</b> coverage = <span class="res" id="eqGfa">2,000 sqm</span></div>
+        <div class="gfa-units" id="eqUnits">&asymp; 13 units at 150 sqm each</div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-col">
+      <div class="verdict-card">
+        <div class="verdict-inner locked" id="verdictInner" aria-hidden="true">
+          <div class="verdict-eyebrow">Your Quick-Screen Verdict</div>
+          <div class="verdict-stamp waiting" id="verdictStamp">
+            <div class="verdict-word" id="verdictWord">AWAITING YOUR NUMBERS</div>
+            <div class="verdict-mdc" id="verdictMdc">&ndash;</div>
+            <div class="verdict-sub">Margin on development cost</div>
+          </div>
+          <p class="verdict-msg" id="verdictMsg"></p>
+
+          <div class="breakdown">
+            <div class="row"><span class="k">Gross realisation (GRV)</span><span class="v" id="rGrv">-</span></div>
+            <div class="row"><span class="k">Land</span><span class="v" id="rLand">-</span></div>
+            <div class="row"><span class="k">Construction</span><span class="v" id="rBuild">-</span></div>
+            <div class="row"><span class="k">Soft costs</span><span class="v" id="rSoft">-</span></div>
+            <div class="row"><span class="k">Acquisition costs (6% of land)</span><span class="v" id="rAcq">-</span></div>
+            <div class="row"><span class="k">Selling costs (2.5% of GRV)</span><span class="v" id="rSell">-</span></div>
+            <div class="row"><span class="k">Finance (7.5% p.a., 65% geared)</span><span class="v" id="rFin">-</span></div>
+            <div class="row total"><span class="k">Total development cost</span><span class="v" id="rTdc">-</span></div>
+            <div class="row profit"><span class="k">Profit</span><span class="v" id="rProfit">-</span></div>
+          </div>
+
+          <div class="rlv" id="rlvBox">To hit a 20% margin, the most you could pay for this site is <b id="rlvVal">-</b></div>
+        </div>
+
+        <!-- Email gate -->
+        <div class="gate" id="gate">
+          <div class="gate-box">
+            <h3>Your verdict is ready</h3>
+            <p>Enter your email to unlock the result, the full cost breakdown, and your maximum site price.</p>
+            <input type="email" id="gateEmail" placeholder="you@email.com" autocomplete="email" aria-label="Email address">
+            <button class="btn" id="gateBtn" type="button">Unlock my result</button>
+            <div class="gate-err" id="gateErr">Enter a valid email to unlock.</div>
+            <div class="gate-fine">You'll also get Site Notes - short, practical development lessons from real projects. Unsubscribe anytime.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta">
+        <div class="cta-eyebrow">Real Projects, Every Week, Zero Theory</div>
+        <h2>The screener tells you IF a deal stacks up. Development Navigator shows you how to deliver it.</h2>
+        <p>DA, funding, consultants, construction, sell-down - the full process, taught from active projects.</p>
+        <a class="btn" id="mainCta" href="https://developmentnavigator.com/">See How Development Navigator Works</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <span class="logo">DEVELOPMENT NAVIGATOR</span>
+    <span>&copy; 2026 Development Navigator. All rights reserved.</span>
+  </div>
+</footer>
+<div class="disclaimer">
+  <div class="wrap">
+    Quick-screen estimates for general information only. Every site is different - always run a full feasibility and obtain professional advice before committing to a purchase.
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Constants ----------
+  var UNIT_SIZE = 150;        // sqm, for the indicative unit count
+  var ACQ_PCT = 0.06;         // acquisition costs, % of land
+  var SELL_PCT = 0.025;       // selling costs, % of GRV
+  var FIN_RATE = 0.075;       // interest p.a.
+  var FIN_GEAR = 0.65;        // share of land + construction debt-funded
+  var TARGET = 0.20;          // target margin for verdict + residual land value
+
+  // ---------- State ----------
+  var unlocked = false;
+
+  // ---------- Helpers ----------
+  function $(id) { return document.getElementById(id); }
+  function num(el) {
+    var v = parseFloat(String(el.value).replace(/[^0-9.]/g, ""));
+    return isNaN(v) ? 0 : v;
+  }
+  function fmt$(v) {
+    if (!isFinite(v)) return "-";
+    var neg = v < 0;
+    var s = "$" + Math.round(Math.abs(v)).toLocaleString("en-AU");
+    return neg ? "-" + s : s;
+  }
+  function fmtN(v) { return Math.round(v).toLocaleString("en-AU"); }
+  function groupDigits(el) {
+    var raw = String(el.value).replace(/[^0-9]/g, "");
+    el.value = raw ? parseInt(raw, 10).toLocaleString("en-AU") : "";
+  }
+
+  // ---------- Theme toggle ----------
+  var root = document.documentElement;
+  function applyTheme(t) {
+    root.setAttribute("data-theme", t);
+    $("themeLabel").textContent = t === "dark" ? "Light mode" : "Dark mode";
+  }
+  var saved = null;
+  try { saved = localStorage.getItem("dn_theme"); } catch (e) {}
+  applyTheme(saved === "dark" ? "dark" : "light");
+  $("themeToggle").addEventListener("click", function () {
+    var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    applyTheme(next);
+    try { localStorage.setItem("dn_theme", next); } catch (e) {}
+    track("theme_toggled", { theme: next });
+  });
+
+  // ---------- Calculation ----------
+  function calc() {
+    var land = num($("landPrice"));
+    var area = num($("landArea"));
+    var coverage = parseFloat($("coverage").value) / 100;
+    var buildRate = num($("buildRate"));
+    var salePsm = num($("salePsm"));
+    var softPct = num($("softPct")) / 100;
+    var months = num($("months"));
+
+    var gfa = area * coverage;
+    var units = gfa > 0 ? Math.max(1, Math.round(gfa / UNIT_SIZE)) : 0;
+
+    // Live GFA strip (always visible - the free win)
+    $("coverageVal").textContent = Math.round(coverage * 100) + "%";
+    $("eqLand").textContent = fmtN(area);
+    $("eqCov").textContent = Math.round(coverage * 100) + "%";
+    $("eqGfa").textContent = fmtN(gfa) + " sqm";
+    $("eqUnits").innerHTML = "&asymp; " + units + " unit" + (units === 1 ? "" : "s") + " at " + UNIT_SIZE + " sqm each";
+
+    var stamp = $("verdictStamp");
+    var word = $("verdictWord");
+    var msg = $("verdictMsg");
+
+    // Waiting state until every required number is in
+    var ready = land > 0 && area > 0 && buildRate > 0 && salePsm > 0 && months > 0;
+    if (!ready) {
+      stamp.classList.remove("green", "amber", "red");
+      stamp.classList.add("waiting");
+      word.textContent = "AWAITING YOUR NUMBERS";
+      $("verdictMdc").innerHTML = "&ndash;";
+      msg.textContent = buildRate <= 0
+        ? "Enter your construction cost to run the screen."
+        : "Fill in the remaining numbers to run the screen.";
+      ["rGrv","rLand","rBuild","rSoft","rAcq","rSell","rFin","rTdc","rProfit"].forEach(function (id) { $(id).textContent = "-"; });
+      $("rProfit").style.color = "";
+      $("rlvBox").innerHTML = "Your maximum site price appears here once the screen runs.";
+      return { mdc: null, gfa: gfa, verdict: "WAITING" };
+    }
+
+    var grv = gfa * salePsm;
+    var build = gfa * buildRate;
+    var soft = build * softPct;
+    var acq = land * ACQ_PCT;
+    var sell = grv * SELL_PCT;
+    var finFactor = FIN_RATE * FIN_GEAR * (months / 12);
+    var fin = (land + build) * finFactor;
+    var tdc = land + build + soft + acq + sell + fin;
+    var profit = grv - tdc;
+    var mdc = tdc > 0 ? profit / tdc : 0;
+
+    // Residual land value at target margin:
+    // TDC(L) = L(1 + ACQ + f) + build(1 + f) + soft + sell, and GRV = (1 + TARGET) x TDC
+    var fixedCosts = build * (1 + finFactor) + soft + sell;
+    var rlv = (grv / (1 + TARGET) - fixedCosts) / (1 + ACQ_PCT + finFactor);
+
+    // ---------- Render ----------
+    $("rGrv").textContent = fmt$(grv);
+    $("rLand").textContent = fmt$(land);
+    $("rBuild").textContent = fmt$(build);
+    $("rSoft").textContent = fmt$(soft);
+    $("rAcq").textContent = fmt$(acq);
+    $("rSell").textContent = fmt$(sell);
+    $("rFin").textContent = fmt$(fin);
+    $("rTdc").textContent = fmt$(tdc);
+    $("rProfit").textContent = fmt$(profit);
+    $("rProfit").style.color = profit >= 0 ? "var(--v-green)" : "var(--v-red)";
+
+    stamp.classList.remove("green", "amber", "red", "waiting");
+    if (mdc >= 0.20) {
+      stamp.classList.add("green");
+      word.textContent = "STACKS UP";
+      msg.textContent = "This clears the 20% margin developers and lenders look for. Worth a full feasibility.";
+    } else if (mdc >= 0.15) {
+      stamp.classList.add("amber");
+      word.textContent = "MARGINAL";
+      msg.textContent = "Fundable but thin. One cost blowout eats your profit. Sharpen the land price or sale rates.";
+    } else {
+      stamp.classList.add("red");
+      word.textContent = "WALK AWAY";
+      msg.textContent = "Below the margin most lenders will fund. The deal needs a cheaper site or higher realisations.";
+    }
+    $("verdictMdc").textContent = (mdc * 100).toFixed(1) + "%";
+
+    if (rlv > 0 && isFinite(rlv)) {
+      $("rlvBox").innerHTML = "To hit a 20% margin, the most you could pay for this site is <b>" + fmt$(rlv) + "</b>";
+    } else {
+      $("rlvBox").innerHTML = "At these build costs and sale rates, this scheme misses a 20% margin at <b>any</b> land price. The sale value per sqm needs to rise before the site works.";
+    }
+
+    return { mdc: mdc, gfa: gfa, verdict: word.textContent };
+  }
+
+  var trackTimer = null;
+  function calcAndTrack() {
+    var r = calc();
+    clearTimeout(trackTimer);
+    trackTimer = setTimeout(function () {
+      track("calculation_run", { mdc_pct: r.mdc === null ? null : +(r.mdc * 100).toFixed(1), gfa_sqm: Math.round(r.gfa), verdict: r.verdict, unlocked: unlocked });
+    }, 1200);
+  }
+
+  // ---------- Inputs ----------
+  ["landPrice", "landArea", "buildRate", "salePsm"].forEach(function (id) {
+    $(id).addEventListener("input", function () { groupDigits(this); calcAndTrack(); });
+  });
+  ["softPct", "months"].forEach(function (id) {
+    $(id).addEventListener("input", calcAndTrack);
+  });
+  $("coverage").addEventListener("input", calcAndTrack);
+
+  // ---------- Email gate ----------
+  function unlock() {
+    unlocked = true;
+    $("gate").style.display = "none";
+    $("verdictInner").classList.remove("locked");
+    $("verdictInner").setAttribute("aria-hidden", "false");
+  }
+  // Skip the gate for visitors arriving from the ManyChat email (?unlock=1)
+  try {
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("unlock") === "1") {
+      track("unlock_via_link", {});
+      unlock();
+    } else if (window.localStorage && localStorage.getItem("dn_screener_unlocked") === "1") {
+      unlock();
+    }
+  } catch (e) { /* storage unavailable - gate stays */ }
+
+  function submitGate() {
+    var email = $("gateEmail").value.trim();
+    var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!ok) { $("gateErr").style.display = "block"; return; }
+    $("gateErr").style.display = "none";
+    $("gateBtn").textContent = "Unlocking...";
+
+    // Kit (ConvertKit) form subscription
+    var done = function () {
+      try { localStorage.setItem("dn_screener_unlocked", "1"); } catch (e) {}
+      track("unlock_submitted", {});
+      unlock();
+      calc();
+    };
+    if (KIT_FORM_ID && KIT_FORM_ID.indexOf("YOUR_") !== 0) {
+      fetch("https://app.kit.com/forms/" + KIT_FORM_ID + "/subscriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email_address: email })
+      }).then(done).catch(done); // unlock either way - never strand a lead at the gate
+    } else {
+      done();
+    }
+  }
+  $("gateBtn").addEventListener("click", submitGate);
+  $("gateEmail").addEventListener("keydown", function (e) { if (e.key === "Enter") submitGate(); });
+
+  // ---------- CTA tracking ----------
+  $("mainCta").addEventListener("click", function () { track("cta_click", { location: "results_panel" }); });
+
+  // ---------- Init ----------
+  calc();
+})();
+</script>
+</body>
+</html>
