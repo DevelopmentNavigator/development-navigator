@@ -7,15 +7,14 @@
 <meta name="description" content="Work out if an industrial unit site stacks up before you ever call the agent. Free quick-screen feasibility calculator by Development Navigator.">
 
 <!-- ============================================================
-  SETUP - swap these two values before going live
-  1. KIT_FORM_ID: your Kit (ConvertKit) form ID for the email gate
-  2. POSTHOG_KEY: same project key as the DN landing page
-  NOTE: links arriving from the ManyChat email can append ?unlock=1
-  to skip the email gate (they have already given their email).
+  SETUP
+  1. KIT_FORM_ID: 9743528 (Deal Screener Gate) - already set
+  2. POSTHOG_KEY: copy the real key (ends 2hMp) from the currently
+     deployed screener/index.html or the homepage before committing
 ============================================================ -->
 <script>
-  const KIT_FORM_ID = "9743528";      // e.g. "1234567"
-  const POSTHOG_KEY = "phc_m8n7GNGqmZXfgPxnixuL6zaWEn3vmtPh5Ahc4nkU2hMp";      // e.g. "phc_xxxxx"
+  const KIT_FORM_ID = "9743528";
+  const POSTHOG_KEY = "phc_m8n7GNGqmZXfgPxnixuL6zaWEn3vmtPh5Ahc4nkU2hMp";
 </script>
 <script>
   if (typeof POSTHOG_KEY !== "undefined" && POSTHOG_KEY && POSTHOG_KEY.indexOf("YOUR_") !== 0) {
@@ -48,10 +47,14 @@
   --field:#F6F3EE;
   --red-tint:#FBE4E1;
   --hl-ink:#8C1420;
-  /* verdict colours (dark card context, both themes) */
-  --v-green:#5BD08A;
-  --v-amber:#F2B23E;
-  --v-red:#FF6B6E;
+  --accent:#C31D2C;         /* red that adapts per theme */
+  /* verdict colours (theme-switchable) */
+  --v-green:#1E7F4F;
+  --v-green-bg:rgba(30,127,79,0.07);
+  --v-amber:#8A5F00;
+  --v-amber-bg:rgba(178,127,15,0.08);
+  --v-red:#C31D2C;
+  --v-red-bg:rgba(195,29,44,0.06);
 }
 [data-theme="dark"]{
   --bg:#151210;
@@ -62,6 +65,13 @@
   --field:#151210;
   --red-tint:rgba(195,29,44,0.22);
   --hl-ink:#FF6B6E;
+  --accent:#FF6B6E;
+  --v-green:#5BD08A;
+  --v-green-bg:rgba(91,208,138,0.08);
+  --v-amber:#F2B23E;
+  --v-amber-bg:rgba(242,178,62,0.08);
+  --v-red:#FF6B6E;
+  --v-red-bg:rgba(255,107,110,0.08);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -111,7 +121,7 @@ section{padding:96px 0;position:relative;}
 .theme-toggle:hover{border-color:var(--red);}
 .theme-toggle .dot{
   width:10px;height:10px;border-radius:50%;
-  background:var(--red);
+  background:var(--accent);
   display:inline-block;
 }
 
@@ -125,14 +135,12 @@ section{padding:96px 0;position:relative;}
   font-weight:600;
   letter-spacing:0.14em;
   text-transform:uppercase;
-  color:var(--red);
+  color:var(--accent);
   background:var(--card);
-  border:1.5px dashed var(--red);
+  border:1.5px dashed var(--accent);
   padding:9px 18px;
   border-radius:3px;
-  transform:rotate(-1.2deg);
 }
-[data-theme="dark"] .eyebrow{color:#FF6B6E;border-color:#FF6B6E;}
 .eyebrow::before{
   content:"";
   width:6px;height:6px;
@@ -150,18 +158,6 @@ section{padding:96px 0;position:relative;}
   border-radius:4px;
   box-decoration-break:clone;
   -webkit-box-decoration-break:clone;
-}
-.subclaim{
-  display:inline-block;
-  margin:26px auto 0;
-  background:var(--red);
-  color:var(--white);
-  font-family:'IBM Plex Mono',monospace;
-  font-size:14px;
-  font-weight:600;
-  letter-spacing:0.02em;
-  padding:10px 20px;
-  border-radius:4px;
 }
 .btn{
   display:inline-flex;
@@ -278,11 +274,10 @@ input::placeholder{color:var(--ink-soft);opacity:0.6;font-weight:500;}
   font-family:'IBM Plex Mono',monospace;
   font-size:22px;
   font-weight:600;
-  color:var(--red);
+  color:var(--accent);
   min-width:72px;
   text-align:right;
 }
-[data-theme="dark"] .slider-val{color:#FF6B6E;}
 input[type="range"]{
   -webkit-appearance:none;
   appearance:none;
@@ -334,11 +329,10 @@ details.learn summary{
   padding:11px 14px;list-style:none;
 }
 details.learn summary::-webkit-details-marker{display:none;}
-details.learn summary::before{content:"+ ";color:var(--red);}
+details.learn summary::before{content:"+ ";color:var(--accent);}
 details.learn[open] summary::before{content:"- ";}
 details.learn div{padding:0 14px 12px;font-size:13.5px;color:var(--ink-soft);}
-details.learn a{color:var(--red);font-weight:600;}
-[data-theme="dark"] details.learn a{color:#FF6B6E;}
+details.learn a{color:var(--accent);font-weight:600;}
 
 /* live GFA strip */
 .gfa-strip{
@@ -354,9 +348,8 @@ details.learn a{color:var(--red);font-weight:600;}
   font-family:'IBM Plex Mono',monospace;
   font-size:12px;font-weight:600;
   letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--red);margin-bottom:6px;
+  color:var(--accent);margin-bottom:6px;
 }
-[data-theme="dark"] .gfa-strip .gfa-label{color:#FF6B6E;}
 .gfa-strip .gfa-eq{
   font-family:'IBM Plex Mono',monospace;
   font-size:clamp(14px,2.4vw,17px);
@@ -368,17 +361,24 @@ details.learn a{color:var(--red);font-weight:600;}
   background-repeat:no-repeat;background-size:100% 74%;background-position:0 58%;
   color:var(--hl-ink);padding:0 6px;border-radius:4px;font-weight:600;
 }
+.gfa-strip .gfa-mezz{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(13px,2.2vw,15px);
+  font-weight:600;color:var(--ink-soft);
+  margin-top:4px;
+}
 .gfa-strip .gfa-units{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-soft);margin-top:6px;}
 
-/* ============ RESULTS (dark block in both themes) ============ */
+/* ============ RESULTS - follows the page theme ============ */
 .verdict-card{
-  background:var(--black);
-  color:var(--white);
+  background:var(--card);
+  color:var(--ink);
+  border:1px solid var(--line);
   border-radius:14px;
   overflow:hidden;
   position:relative;
+  transition:background .25s ease, border-color .25s ease;
 }
-[data-theme="dark"] .verdict-card{border:1px solid var(--line);}
 .verdict-inner{padding:34px;transition:filter .3s ease;}
 @media (max-width:480px){.verdict-inner{padding:24px 22px;}}
 .verdict-inner.locked{filter:blur(10px);pointer-events:none;user-select:none;}
@@ -387,19 +387,19 @@ details.learn a{color:var(--red);font-weight:600;}
   font-family:'IBM Plex Mono',monospace;
   font-size:12.5px;font-weight:600;
   letter-spacing:0.14em;text-transform:uppercase;
-  color:#FF6B6E;margin-bottom:18px;
+  color:var(--accent);margin-bottom:18px;
 }
 .verdict-stamp{
   text-align:center;
   padding:24px 16px;
   border-radius:8px;
-  border:1.5px dashed rgba(255,255,255,0.25);
+  border:1.5px dashed var(--line);
   margin-bottom:24px;
 }
-.verdict-stamp.green{border-color:var(--v-green);background:rgba(91,208,138,0.08);}
-.verdict-stamp.amber{border-color:var(--v-amber);background:rgba(242,178,62,0.08);}
-.verdict-stamp.red{border-color:var(--v-red);background:rgba(255,107,110,0.08);}
-.verdict-stamp.waiting{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.04);}
+.verdict-stamp.green{border-color:var(--v-green);background:var(--v-green-bg);}
+.verdict-stamp.amber{border-color:var(--v-amber);background:var(--v-amber-bg);}
+.verdict-stamp.red{border-color:var(--v-red);background:var(--v-red-bg);}
+.verdict-stamp.waiting{border-color:var(--line);background:transparent;}
 .verdict-word{
   font-family:'IBM Plex Mono',monospace;
   font-size:13px;font-weight:600;
@@ -408,7 +408,7 @@ details.learn a{color:var(--red);font-weight:600;}
 .verdict-stamp.green .verdict-word{color:var(--v-green);}
 .verdict-stamp.amber .verdict-word{color:var(--v-amber);}
 .verdict-stamp.red .verdict-word{color:var(--v-red);}
-.verdict-stamp.waiting .verdict-word{color:#9C9489;}
+.verdict-stamp.waiting .verdict-word{color:var(--ink-soft);}
 .verdict-mdc{
   font-family:'Archivo',sans-serif;
   font-size:54px;font-weight:900;
@@ -417,29 +417,29 @@ details.learn a{color:var(--red);font-weight:600;}
 .verdict-sub{
   font-family:'IBM Plex Mono',monospace;
   font-size:11.5px;letter-spacing:0.1em;
-  text-transform:uppercase;color:#9C9489;
+  text-transform:uppercase;color:var(--ink-soft);
 }
-.verdict-msg{font-size:14.5px;color:#C9C2B6;margin-bottom:22px;}
+.verdict-msg{font-size:14.5px;color:var(--ink-soft);margin-bottom:22px;}
 
-.breakdown{border-top:1px solid rgba(255,255,255,0.12);}
+.breakdown{border-top:1px solid var(--line);}
 .row{
   display:flex;justify-content:space-between;gap:12px;
   padding:9px 0;font-size:13.5px;
-  border-bottom:1px solid rgba(255,255,255,0.12);
+  border-bottom:1px solid var(--line);
 }
-.row .k{color:#9C9489;}
-.row .v{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap;color:var(--white);}
-.row.total .k,.row.total .v{color:var(--white);font-weight:700;}
+.row .k{color:var(--ink-soft);}
+.row .v{font-family:'IBM Plex Mono',monospace;font-weight:600;white-space:nowrap;color:var(--ink);}
+.row.total .k,.row.total .v{color:var(--ink);font-weight:700;}
 .row.profit .v{font-weight:700;}
 
 .rlv{
   margin-top:20px;
   padding:16px 18px;
-  border:1.5px dashed #FF6B6E;
+  border:1.5px dashed var(--accent);
   border-radius:8px;
-  font-size:14px;color:#C9C2B6;
+  font-size:14px;color:var(--ink-soft);
 }
-.rlv b{font-family:'IBM Plex Mono',monospace;color:#FF6B6E;font-weight:600;font-size:15px;}
+.rlv b{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-weight:600;font-size:15px;}
 
 /* email gate */
 .gate{
@@ -463,8 +463,7 @@ details.learn a{color:var(--red);font-weight:600;}
 .gate-box input{margin-bottom:12px;}
 .gate-box .btn{width:100%;justify-content:center;}
 .gate-fine{font-size:11.5px;color:var(--ink-soft);margin-top:12px;line-height:1.5;}
-.gate-err{font-size:12.5px;color:var(--red);margin-top:8px;display:none;font-weight:600;}
-[data-theme="dark"] .gate-err{color:#FF6B6E;}
+.gate-err{font-size:12.5px;color:var(--accent);margin-top:8px;display:none;font-weight:600;}
 
 /* ============ CTA ============ */
 .cta{
@@ -480,10 +479,11 @@ details.learn a{color:var(--red);font-weight:600;}
   font-family:'IBM Plex Mono',monospace;
   font-size:12.5px;font-weight:600;
   letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--red);margin-bottom:14px;
+  color:var(--accent);margin-bottom:14px;
 }
-[data-theme="dark"] .cta .cta-eyebrow{color:#FF6B6E;}
 .cta h2{font-size:clamp(1.25rem,2.4vw,1.5rem);margin-bottom:10px;}
+.cta h2 .h2-line{display:block;}
+.cta h2 .h2-line + .h2-line{margin-top:12px;}
 .cta p{font-size:14.5px;color:var(--ink-soft);margin-bottom:22px;}
 
 /* ============ FOOTER - identical to index.html + disclaimer ============ */
@@ -507,10 +507,11 @@ footer .logo{
 .disclaimer{
   background:var(--black);
   color:#9C9489;
-  padding:0 0 26px;
-  font-size:12px;line-height:1.7;
+  padding:0 0 30px;
+  font-size:11.5px;line-height:1.75;
 }
 .disclaimer .wrap{border-top:1px solid rgba(255,255,255,0.12);padding-top:20px;}
+.disclaimer strong{color:#C9C2B6;}
 </style>
 </head>
 <body>
@@ -525,7 +526,6 @@ footer .logo{
     <div class="eyebrow">Free Tool for Aussie Aspiring Developers</div>
     <h1>The <span class="hl">10-Minute</span> Industrial Deal Screener</h1>
     <p class="lede">Work out if an industrial unit site stacks up before you ever call the agent. Punch in the numbers straight off the listing - get a go / no-go verdict in minutes.</p>
-    <span class="subclaim">real numbers, real verdict, ten minutes</span>
   </div>
 </section>
 
@@ -558,7 +558,7 @@ footer .logo{
 
         <div class="field">
           <label for="coverage">Site coverage</label>
-          <div class="hint">The share of your land that becomes sellable floor space. Every council sets its own limits, so this varies site to site - slide to what you think applies, then verify it before you go further.</div>
+          <div class="hint">The share of your land that becomes ground floor space. Every council sets its own limits, so this varies site to site - slide to what you think applies, then verify it before you go further.</div>
           <div class="slider-row">
             <input type="range" id="coverage" min="40" max="75" step="1" value="50" aria-label="Site coverage percentage">
             <span class="slider-val" id="coverageVal">50%</span>
@@ -569,6 +569,15 @@ footer .logo{
             <div>It sits in your council's planning controls, and they differ in every local government area. Inside <a href="https://developmentnavigator.com/" target="_blank" rel="noopener">Development Navigator</a> I show you how to pull the controls for any site in Australia in under 5 minutes.</div>
           </details>
         </div>
+
+        <div class="field">
+          <label for="mezzArea">Mezzanine area <span style="font-weight:400;color:var(--ink-soft);">(optional)</span></label>
+          <div class="hint">Total mezzanine floor space across all units, if your design includes it. Site coverage caps the footprint - mezzanines stack sellable space on top of it.</div>
+          <div class="input-shell suffix">
+            <input type="text" id="mezzArea" inputmode="numeric" value="" placeholder="0">
+            <span class="affix r">sqm</span>
+          </div>
+        </div>
       </div>
 
       <div class="card">
@@ -576,7 +585,7 @@ footer .logo{
 
         <div class="field">
           <label for="buildRate">Construction cost</label>
-          <div class="hint">What it costs to build per sqm of floor space, including siteworks. This number makes or breaks a feasibility - if you don't know yours yet, that's worth paying attention to.</div>
+          <div class="hint">What it costs to build per sqm of floor space, including siteworks. Use a blended rate across ground and mezzanine if you've included mezzanine area. This number makes or breaks a feasibility - if you don't know yours yet, that's worth paying attention to.</div>
           <div class="input-shell prefix suffix">
             <span class="affix l">$</span>
             <input type="text" id="buildRate" inputmode="numeric" value="" placeholder="Enter your rate">
@@ -585,18 +594,8 @@ footer .logo{
         </div>
 
         <div class="field">
-          <label for="salePsm">End sale value</label>
-          <div class="hint">What comparable units are selling for per sqm, ex GST. Check recent listings in the same estate or suburb - this number matters most, so use real evidence.</div>
-          <div class="input-shell prefix suffix">
-            <span class="affix l">$</span>
-            <input type="text" id="salePsm" inputmode="numeric" value="3,200">
-            <span class="affix r">/sqm</span>
-          </div>
-        </div>
-
-        <div class="field">
           <label for="softPct">Soft costs</label>
-          <div class="hint">Consultants, council contributions, approvals and contingency, as a share of construction. 20% is a sound screening allowance.</div>
+          <div class="hint">Consultants, council contributions, approvals and contingency, as a share of construction.</div>
           <div class="input-shell suffix">
             <input type="number" id="softPct" min="5" max="40" step="1" value="20">
             <span class="affix r">%</span>
@@ -611,11 +610,22 @@ footer .logo{
             <span class="affix r">months</span>
           </div>
         </div>
+
+        <div class="field">
+          <label for="salePsm">End sale value</label>
+          <div class="hint">What comparable units are selling for per sqm, ex GST. Check recent listings in the same estate or suburb, and use a blended rate if you've included mezzanine - mezz space sells below ground floor rates. This number matters most, so use real evidence.</div>
+          <div class="input-shell prefix suffix">
+            <span class="affix l">$</span>
+            <input type="text" id="salePsm" inputmode="numeric" value="3,200">
+            <span class="affix r">/sqm</span>
+          </div>
+        </div>
       </div>
 
       <div class="gfa-strip" aria-live="polite">
         <div class="gfa-label">Your sellable space</div>
         <div class="gfa-eq"><b id="eqLand">4,000</b> sqm land &times; <b id="eqCov">50%</b> coverage = <span class="res" id="eqGfa">2,000 sqm</span></div>
+        <div class="gfa-mezz" id="eqMezzRow" style="display:none;">+ <b id="eqMezz">0</b> sqm mezzanine = <span class="res" id="eqTotal">2,000 sqm</span> total</div>
         <div class="gfa-units" id="eqUnits">&asymp; 13 units at 150 sqm each</div>
       </div>
     </div>
@@ -644,7 +654,7 @@ footer .logo{
             <div class="row profit"><span class="k">Profit</span><span class="v" id="rProfit">-</span></div>
           </div>
 
-          <div class="rlv" id="rlvBox">To hit a 20% margin, the most you could pay for this site is <b id="rlvVal">-</b></div>
+          <div class="rlv" id="rlvBox">Your maximum site price appears here once the screen runs.</div>
         </div>
 
         <!-- Email gate -->
@@ -662,7 +672,7 @@ footer .logo{
 
       <div class="cta">
         <div class="cta-eyebrow">Real Projects, Every Week, Zero Theory</div>
-        <h2>The screener tells you IF a deal stacks up. Development Navigator shows you how to deliver it.</h2>
+        <h2><span class="h2-line">The screener tells you IF a deal stacks up.</span><span class="h2-line">Development Navigator shows you how to deliver it.</span></h2>
         <p>DA, funding, consultants, construction, sell-down - the full process, taught from active projects.</p>
         <a class="btn" id="mainCta" href="https://developmentnavigator.com/">See How Development Navigator Works</a>
       </div>
@@ -679,7 +689,7 @@ footer .logo{
 </footer>
 <div class="disclaimer">
   <div class="wrap">
-    Quick-screen estimates for general information only. Every site is different - always run a full feasibility and obtain professional advice before committing to a purchase.
+    <strong>Disclaimer.</strong> This calculator is a general-purpose educational tool only. It does not constitute financial, investment, legal, tax, valuation, construction or property development advice, and it has been prepared without regard to your objectives, financial situation or needs. All outputs are estimates generated solely from figures and assumptions you enter, combined with fixed simplified allowances that will not reflect the actual costs, revenues, taxes (including GST treatment), finance terms, planning controls or market conditions applying to any real site or project. No representation or warranty, express or implied, is made as to the accuracy, completeness, currency, reliability or suitability of any output for any purpose. You must not rely on this tool, or any output of it, in making any decision, including any decision to purchase, sell, lease, finance, design or develop property. Before acting on anything shown here, you should conduct your own complete feasibility analysis and due diligence and obtain advice from appropriately qualified and licensed professionals, including legal, accounting, taxation, valuation, town planning, engineering and construction advisers. To the maximum extent permitted by law, Development Navigator and its related bodies corporate, and each of their respective directors, officers, employees, contractors and agents, exclude all liability for any loss, damage, cost or expense (including indirect and consequential loss, loss of profit and loss of opportunity), however arising (including through negligence), suffered or incurred by any person arising out of or in connection with the use of, or reliance on, this tool or any of its outputs. Where any law (including the Australian Consumer Law) implies a guarantee, condition or warranty that cannot lawfully be excluded, liability is limited, to the extent permitted, to the resupply of the relevant services or the cost of resupply.
   </div>
 </div>
 
@@ -737,19 +747,28 @@ footer .logo{
     var land = num($("landPrice"));
     var area = num($("landArea"));
     var coverage = parseFloat($("coverage").value) / 100;
+    var mezz = num($("mezzArea"));
     var buildRate = num($("buildRate"));
     var salePsm = num($("salePsm"));
     var softPct = num($("softPct")) / 100;
     var months = num($("months"));
 
-    var gfa = area * coverage;
+    var ground = area * coverage;
+    var gfa = ground + mezz;
     var units = gfa > 0 ? Math.max(1, Math.round(gfa / UNIT_SIZE)) : 0;
 
     // Live GFA strip (always visible - the free win)
     $("coverageVal").textContent = Math.round(coverage * 100) + "%";
     $("eqLand").textContent = fmtN(area);
     $("eqCov").textContent = Math.round(coverage * 100) + "%";
-    $("eqGfa").textContent = fmtN(gfa) + " sqm";
+    $("eqGfa").textContent = fmtN(ground) + " sqm";
+    if (mezz > 0) {
+      $("eqMezzRow").style.display = "";
+      $("eqMezz").textContent = fmtN(mezz);
+      $("eqTotal").textContent = fmtN(gfa) + " sqm";
+    } else {
+      $("eqMezzRow").style.display = "none";
+    }
     $("eqUnits").innerHTML = "&asymp; " + units + " unit" + (units === 1 ? "" : "s") + " at " + UNIT_SIZE + " sqm each";
 
     var stamp = $("verdictStamp");
@@ -830,12 +849,12 @@ footer .logo{
     var r = calc();
     clearTimeout(trackTimer);
     trackTimer = setTimeout(function () {
-      track("calculation_run", { mdc_pct: r.mdc === null ? null : +(r.mdc * 100).toFixed(1), gfa_sqm: Math.round(r.gfa), verdict: r.verdict, unlocked: unlocked });
+      track("calculation_run", { mdc_pct: r.mdc === null ? null : +(r.mdc * 100).toFixed(1), gfa_sqm: Math.round(r.gfa), mezz_sqm: Math.round(num($("mezzArea"))), verdict: r.verdict, unlocked: unlocked });
     }, 1200);
   }
 
   // ---------- Inputs ----------
-  ["landPrice", "landArea", "buildRate", "salePsm"].forEach(function (id) {
+  ["landPrice", "landArea", "mezzArea", "buildRate", "salePsm"].forEach(function (id) {
     $(id).addEventListener("input", function () { groupDigits(this); calcAndTrack(); });
   });
   ["softPct", "months"].forEach(function (id) {
@@ -850,7 +869,9 @@ footer .logo{
     $("verdictInner").classList.remove("locked");
     $("verdictInner").setAttribute("aria-hidden", "false");
   }
-  // Skip the gate for visitors arriving from the ManyChat email (?unlock=1)
+  // Skip the gate for visitors arriving from the ManyChat DM (?unlock=1).
+  // Link-based unlocks are per-visit only: no localStorage write, so a
+  // shared or forwarded link never permanently ungates a new browser.
   try {
     var params = new URLSearchParams(window.location.search);
     if (params.get("unlock") === "1") {
