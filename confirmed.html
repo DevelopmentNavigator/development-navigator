@@ -59,6 +59,42 @@
   .video-frame .ratio{position:relative;width:100%;padding-top:56.25%;border-radius:6px;overflow:hidden;background:#000;}
   .video-frame .ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 
+  .faq-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:24px;
+    margin-top:36px;
+    text-align:left;
+  }
+  .faq-card{
+    grid-column:span 2;
+    border:2px solid var(--black);
+    border-radius:10px;
+    overflow:hidden;
+    background:var(--white);
+  }
+  .faq-card .q{
+    padding:18px 22px;
+    font-family:'Archivo',sans-serif;
+    font-weight:800;
+    font-size:15px;
+    line-height:1.3;
+    border-bottom:2px solid var(--black);
+  }
+  .faq-card .ratio{
+    position:relative;
+    width:100%;
+    padding-top:56.25%;
+    background:#000;
+  }
+  .faq-card .ratio iframe{
+    position:absolute;inset:0;width:100%;height:100%;border:0;
+  }
+  /* a lone card on the final row sits centred, same width as the rest */
+  .faq-grid > .faq-card:last-child:nth-child(odd){
+    grid-column:2 / span 2;
+  }
+
   .video-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px;}
   .video-card{border:2px solid var(--black);border-radius:10px;overflow:hidden;}
   .video-card .tag{padding:14px 18px;font-family:'Archivo',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.02em;text-transform:uppercase;text-align:center;}
@@ -89,18 +125,11 @@
     .box{padding:32px 22px;}
     .video-grid{grid-template-columns:1fr;}
     .proof-grid{grid-template-columns:1fr;}
+    .faq-grid{grid-template-columns:1fr;gap:18px;}
+    .faq-card{grid-column:span 1;}
+    .faq-grid > .faq-card:last-child:nth-child(odd){grid-column:span 1;}
   }
 </style>
-<script>
-  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init me ws ge fs capture De calculateEventProperties $s register register_once register_for_session unregister unregister_for_session Ai getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Tt $t createPersonProfile Es opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug I As getPageViewId captureTraceFeedback captureTraceMetric".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-  posthog.init('phc_m8n7GNGqmZXfgPxnixuL6zaWEn3vmtPh5Ahc4nkU2hMp', {
-    api_host: 'https://us.i.posthog.com',
-    person_profiles: 'identified_only',
-    capture_pageview: true,
-    capture_pageleave: true,
-    autocapture: true
-  });
-</script>
 <!-- Meta Pixel Code -->
 <script>
 !function(f,b,e,v,n,t,s)
@@ -113,12 +142,16 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 fbq('init', '1985559275491546');
 fbq('track', 'PageView');
-fbq('track', 'Schedule');
+if (!sessionStorage.getItem('dn_schedule_fired')) {
+  fbq('track', 'Schedule');
+  sessionStorage.setItem('dn_schedule_fired', '1');
+}
 </script>
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=1985559275491546&ev=PageView&noscript=1"
 /></noscript>
-<!-- End Meta Pixel Code --></head>
+<!-- End Meta Pixel Code -->
+</head>
 <body>
 
 <!-- ============ HEADER ============ -->
@@ -143,7 +176,7 @@ src="https://www.facebook.com/tr?id=1985559275491546&ev=PageView&noscript=1"
         </div>
         <div class="video-frame">
           <div class="ratio">
-            <iframe src="https://www.youtube-nocookie.com/embed/O2zIbHQgx_o" title="Mandatory pre-call video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube-nocookie.com/embed/O2zIbHQgx_o" title="Mandatory video before your video call" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
         </div>
       </div>
@@ -152,13 +185,47 @@ src="https://www.facebook.com/tr?id=1985559275491546&ev=PageView&noscript=1"
       <div class="step-block">
         <div class="step-head">
           <div class="step-tag"><span class="step-num">02</span><span class="step-label">Step 2 of 3 to lock in your spot</span></div>
-          <h2>Hear Jack's Story First</h2>
-          <p class="sub">Watch this before your video call.</p>
+          <h2>Get Your Questions <span class="hl">Answered</span></h2>
+          <p class="sub">Watch these short videos to learn more about the program.</p>
         </div>
-        <div class="video-frame">
-          <div class="ratio">
-            <iframe src="https://www.youtube-nocookie.com/embed/telElkGFPdk" title="Jack's story" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+        <div class="faq-grid">
+
+          <div class="faq-card">
+            <div class="q">How much money do you need to get started, and is it even worth it?</div>
+            <div class="ratio">
+              <iframe src="https://www.youtube-nocookie.com/embed/z68vmngEIyw" title="How much money do you need to get started, and is it even worth it?" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
           </div>
+
+          <div class="faq-card">
+            <div class="q">Will it work for me? I've been burnt before.</div>
+            <div class="ratio">
+              <iframe src="https://www.youtube-nocookie.com/embed/y45WBi7I9yY" title="Will it work for me? I've been burnt before." loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="q">Is now the right time for me?</div>
+            <div class="ratio">
+              <iframe src="https://www.youtube-nocookie.com/embed/n7X7_yMedVk" title="Is now the right time for me?" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="q">Are you still doing your own developments across Australia?</div>
+            <div class="ratio">
+              <iframe src="https://www.youtube-nocookie.com/embed/HAEEDiabai8" title="Are you still doing your own developments across Australia?" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+
+          <div class="faq-card">
+            <div class="q">Will it work in my specific part of Australia?</div>
+            <div class="ratio">
+              <iframe src="https://www.youtube-nocookie.com/embed/IzkOpcR4x8I" title="Will it work in my specific part of Australia?" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>
+
         </div>
       </div>
 
