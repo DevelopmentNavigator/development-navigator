@@ -110,10 +110,13 @@
   .sec-head h2{font-size:clamp(1.7rem,3.2vw,2.3rem);}
   .sec-head p{color:var(--ink-soft);margin-top:12px;font-size:15.5px;}
 
-  .proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px;max-width:820px;margin-left:auto;margin-right:auto;}
-  .proof-card{background:var(--black);border-radius:12px;overflow:hidden;}
-  .proof-card .ratio{position:relative;width:100%;padding-top:177.7%;}
-  .proof-card .ratio iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  /* two portrait testimonials side by side, landscape one beneath */
+  .proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:0 auto 24px;max-width:620px;}
+  .proof-wide{max-width:620px;margin:0 auto 28px;}
+  .proof-card{position:relative;background:var(--black);border-radius:12px;overflow:hidden;}
+  .proof-card.portrait{aspect-ratio:9 / 16;}
+  .proof-card.landscape{aspect-ratio:16 / 9;}
+  .proof-card iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 
   .interview-block{background:var(--black);border-radius:14px;padding:34px;color:var(--white);max-width:820px;margin:0 auto;}
   .interview-block .intro{font-family:'Archivo',sans-serif;font-weight:800;font-size:1.1rem;margin-bottom:20px;max-width:520px;}
@@ -127,7 +130,8 @@
   @media (max-width:720px){
     .box{padding:32px 22px;}
     .video-grid{grid-template-columns:1fr;}
-    .proof-grid{grid-template-columns:1fr;}
+    .proof-grid{grid-template-columns:1fr;max-width:420px;}
+    .proof-card.portrait{max-width:calc(80vh * 9 / 16);margin:0 auto;width:100%;}
     .faq-grid{grid-template-columns:1fr;gap:18px;}
     .faq-card{grid-column:span 1;}
     .faq-grid > .faq-card:last-child:nth-child(odd){grid-column:span 1;}
@@ -268,15 +272,17 @@ src="https://www.facebook.com/tr?id=1985559275491546&ev=PageView&noscript=1"
     </div>
 
     <div class="proof-grid reveal">
-      <div class="proof-card">
-        <div class="ratio">
-          <iframe src="https://www.youtube-nocookie.com/embed/KEupsDeH3wQ" title="Development Navigator student testimonial" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
+      <div class="proof-card portrait">
+        <iframe src="https://www.youtube-nocookie.com/embed/KEupsDeH3wQ" title="Development Navigator student testimonial" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
-      <div class="proof-card">
-        <div class="ratio">
-          <iframe src="https://www.youtube-nocookie.com/embed/nActBPICqAs" title="Development Navigator student testimonial" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
+      <div class="proof-card portrait">
+        <iframe src="https://www.youtube-nocookie.com/embed/RQonY2w56nA" title="Max - Development Navigator testimonial" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="proof-wide reveal">
+      <div class="proof-card landscape">
+        <iframe src="https://www.youtube-nocookie.com/embed/nActBPICqAs" title="Development Navigator student testimonial" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
     </div>
 
